@@ -1,5 +1,7 @@
 module ULID
 
+using Dates
+
 import Base: rand
 import Dates: now, DateTime, Millisecond
 
@@ -9,7 +11,7 @@ const CROCKFORD_BASE32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
 # Function to generate a ULID
 function generate_ulid()
     timestamp = get_timestamp()
-    random_part = get_random_part()
+    random_part = UInt128(get_random_part())
     encode_base32(timestamp * 2^80 + random_part)
 end
 
