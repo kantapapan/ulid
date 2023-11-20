@@ -1,39 +1,43 @@
-module ULID
-
+using UUIDs
 using Dates
-import Base: rand
-import Dates: now, DateTime, Millisecond
 
-# Constants for ULID
-const CROCKFORD_BASE32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+struct ULID
+    TIMESTAMP_LENGTH::Int
+    RANDOM_LENGTH::Int
+    ULID_LENGTH::Int
+    BASE32_CHARS::String
+end
 
-# Function to generate a ULID
-function generate_ulid()
+function ULID()
+    ULID(48, 80, 26, "0123456789ABCDEFGHJKMNPQRSTVWXYZ")
+end
+
+function generate(ulid::ULID)
     timestamp = get_timestamp()
-    random_part = UInt128(get_random_part())
-    encode_base32(timestamp * 2^80 + random_part)
+    random_part = get_random(ulid)
+
+    # タイムスタンプを80ビット左にシフトし、ランダム部分と組み合わせる
+    ulid_value = (UInt128(timestamp) << ulid.RANDOM_LENGTH) | random_part
+    encode_ulid(ulid, ulid_value)
 end
 
-# Function to get the current timestamp in milliseconds since UNIX epoch
-function get_timestamp()
-    datetime = now()
-    return Int(floor(Dates.datetime2unix(datetime) * 1000))
-end
-
-# Function to generate the random part of the ULID
-function get_random_part()
-    return rand(UInt64) * 2^16 + rand(UInt16)
-end
-
-# Function to encode a number into base32
-function encode_base32(number::UInt128)
+function encode_ulid(ulid::ULID, value::UInt128)
     encoded = ""
-    for i in 1:26
-        digit = number % 32
-        number = number ÷ 32
-        encoded = CROCKFORD_BASE32[digit + 1] * encoded
+    for _ in 1:ulid.ULID_LENGTH
+        encoded = ulid.BASE32_CHARS[(value % 32) + 1] * encoded
+        value = value ÷ 32
     end
     return encoded
 end
 
+function get_timestamp()
+    # Get the current time in milliseconds since UNIX epoch
+    return floor(Int, (Dates.datetime2unix(Dates.now()) * 1000))
 end
+
+function get_random(ulid::ULID)
+    # Generate a random 80-bit integer
+    uuid_bytes = UInt128(uuid4()) # UUIDをUInt128として取得
+    return uuid_bytes & 0xFFFFFFFFFFFFFFFFFF # 最初の10バイトのみを保持
+end
+
