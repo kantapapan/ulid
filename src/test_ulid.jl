@@ -1,8 +1,7 @@
 using Dates
 using Test
-include("ulid.jl")  # ULIDモジュールをインクルード
+include("ulid.jl")
 
-# ULIDモジュールのテストケース
 @testset "ULID Module Tests" begin
     # generate_ulid()関数のテスト
     @testset "generate_ulid()" begin

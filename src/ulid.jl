@@ -1,7 +1,6 @@
 module ULID
 
 using Dates
-
 import Base: rand
 import Dates: now, DateTime, Millisecond
 
