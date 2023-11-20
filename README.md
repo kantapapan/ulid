@@ -29,5 +29,34 @@ ulid = generate(ulid_gen)
 println(ulid)
 ```
 
+## 実行例
+
+```
+julia> include("ulid.jl")
+get_random (generic function with 1 method)
+
+julia> ulid_gen = ULID()
+ULID(48, 80, 26, "0123456789ABCDEFGHJKMNPQRSTVWXYZ")
+
+julia> ulid = generate(ulid_gen)
+"01HFQH83AD00X8WSNFZE3D81XY"
+
+julia> println(ulid)
+01HFQH83AD00X8WSNFZE3D81XY
+
+julia> ulid = generate(ulid_gen)
+"01HFQH8D2701NTYEFNF32EXM0Y"
+
+julia> println(ulid)
+01HFQH8D2701NTYEFNF32EXM0Y
+
+julia> ulid = generate(ulid_gen)
+"01HFQH8MP300YVR8SHW7F7Y92K"
+
+julia> println(ulid)
+01HFQH8MP300YVR8SHW7F7Y92K
+```
+
+
 ## ライセンス
 このプロジェクトは MIT License の下で公開されています。
